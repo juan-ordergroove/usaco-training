@@ -1,0 +1,169 @@
+/*
+ID: jmg20482
+LANG: JAVA
+TASK: clocks
+*/
+
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+import java.awt.Point;
+
+public class clocks {
+  
+  public static void main(String[] args) throws IOException {
+    BufferedReader in = new BufferedReader(new FileReader("clocks.in"));
+    PrintWriter out = new PrintWriter(new FileWriter("clocks.out"));
+    
+    int[][] clocks = new int[3][3];
+    
+    // Parse input
+    int rowIdx = 0;
+    String line = "";
+    while ((line = in.readLine()) != null) {
+      StringTokenizer tokenizer = new StringTokenizer(line);
+      for (int i = 0; i < 3; ++i)
+        clocks[rowIdx][i] = Integer.parseInt(tokenizer.nextToken());
+      ++rowIdx;
+    }
+    
+    // More search iterations need to be made -- this is only one pass for testing...
+    // Think about the following - some points have multiple paths...
+    //      |
+    //     / \
+    //    |   |
+    //   / \ / \
+    //
+    // How do you store the state(s)?
+    ClockManager clockManager = new ClockManager(clocks);
+    List<List<Integer>> minPaths = clockManager.searchMinimumPaths();
+    
+    for (int i=0; i < minPaths.size(); ++i) {
+      List<Integer> path = minPaths.get(i);
+//      if (path.size() == 0)
+//        continue;
+
+      for (int j=0; j < path.size(); ++j) 
+        out.print(path.get(j) + ((j < path.size()-1) ? " " : ""));
+      out.println();
+      
+//      break;
+    }
+    
+    in.close();
+    out.close();
+    //System.exit(0);
+  }
+}
+
+class ClockManager {
+  private int[][] clocks;
+  private List<Integer> moveCount;
+  private List<List<Integer>> minPaths;
+  int[][][] movesToClocksAffected = {
+    { {0,0}, {0,1}, {1,0}, {1,1} },
+    { {0,0}, {0,1}, {0,2} },
+    { {0,1}, {0,2}, {1,1}, {1,2} },
+    { {0,0}, {1,0}, {2,0} },
+    { {0,1}, {1,0}, {1,1}, {1,2}, {2,1} },
+    { {0,2}, {1,2}, {2,2} },
+    { {1,0}, {1,1}, {2,0}, {2,1} },
+    { {2,0}, {2,1}, {2,2} },
+    { {1,1}, {1,2}, {2,1}, {2,2} }
+  };
+  
+  public ClockManager(int[][] clocks) {
+    this.clocks = clocks;
+    this.minPaths = new ArrayList();
+    this.minPaths.add(new ArrayList());
+    
+    this.moveCount = new ArrayList();
+    for (int i=0; i < 9; ++i)
+      this.moveCount.add(0);
+  }
+  
+  public List searchMinimumPaths() {
+    for (int moveIdx=1; moveIdx < 10; ++moveIdx)
+    {
+      this.moveCount.add(moveIdx-1, 1);
+      
+      int[][] cMatrix = new int[3][3];
+      for (int i=0; i < 3; ++i)
+        for (int j=0; j < 3; ++j)
+          cMatrix[i][j] = this.clocks[i][j];
+      this.searchMoves(cMatrix, new ArrayList(), moveIdx);
+    }
+    
+    return this.minPaths;
+  }
+  
+  public void searchMoves(int[][] clocks, List originalPath, int moveIdx) {
+    // Recursive basecase: Moves 1 - 9
+    List<Integer> newPath = this.Move(clocks, originalPath, moveIdx);
+    
+    for (int i=0; i < 3; ++i) {
+      for (int j=0; j < 3; ++j)
+        System.out.print(clocks[i][j] + " ");
+      System.out.println();
+    }
+    System.out.println();
+//    try {
+//      Thread.currentThread().sleep(2000);
+//    }
+//    catch(InterruptedException ie) {
+//      System.out.println(ie);
+//    }
+    
+    if (this.allClocksAt12(clocks)) {
+      int pathLen = this.minPaths.size();
+      List lastMinPath = this.minPaths.get(pathLen-1);
+      if (lastMinPath.size() > newPath.size()) {
+        this.minPaths = new ArrayList();
+        this.minPaths.add(newPath);
+      }
+      else if (lastMinPath.size() == 0 || lastMinPath.size() == newPath.size()) {
+        this.minPaths.add(newPath);
+      }
+    }
+    
+    for (int newMoveIdx=1; newMoveIdx < 10; ++newMoveIdx) {
+      int moveCount = this.moveCount.get(newMoveIdx-1);
+      if (moveCount == 3)
+        continue;
+      else
+        this.moveCount.add(newMoveIdx-1, ++moveCount);
+      
+      int[][] cMatrix = new int[3][3];
+      for (int i=0; i < 3; ++i)
+        for (int j=0; j < 3; ++j)
+          cMatrix[i][j] = clocks[i][j];
+      
+      this.searchMoves(cMatrix, newPath, newMoveIdx);
+    }
+    
+    int moveCount = this.moveCount.get(moveIdx-1);
+  }
+  
+  private boolean allClocksAt12(int[][] cMatrix) {
+    for (int i=0; i < 3; ++i)
+      for (int j=0; j < 3; ++j)
+        if (cMatrix[i][j] != 12) return false;
+    return true;
+  }
+  
+  private List Move(int[][] cMatrix, List path, int moveIdx) {
+    // int[][] = { {x,y}, ... }
+    int[][] clocksAffected = this.movesToClocksAffected[moveIdx-1];
+        
+    System.out.println("Move: " + moveIdx);
+    for (int i=0; i < clocksAffected.length; ++i) {
+      int row = clocksAffected[i][0];
+      int col = clocksAffected[i][1];
+      
+      cMatrix[row][col] = (cMatrix[row][col] == 12) ? 3 : cMatrix[row][col]+3;
+    }
+    
+    path.add(moveIdx);
+    return path;
+  }
+}

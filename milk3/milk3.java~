@@ -1,0 +1,17 @@
+/*
+ID: jmg20482
+LANG: JAVA
+TASK: milk3
+*/
+
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+
+public class milk3 {
+  
+  public static void main(String[] args) throws IOException {
+    BufferedReader in = new BufferedReader(new FileReader("milk3.in"));
+    PrintWriter out = new PrintWriter(new FileWriter("milk3.out"));
+  }
+}
