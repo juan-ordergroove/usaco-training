@@ -38,64 +38,137 @@ public class sort3 {
     
     private void perform_sort() {
         for (int i=0; i < this.one_key_locs.size(); ++i) {
-            int key_pos = this.one_key_locs.get(i);
-            if (key_pos < this.one_keys) { continue; }
+            int one_key_loc = this.one_key_locs.get(i);
+            if (one_key_loc < this.one_keys) { continue; }
             
-            int start = 0;
-            int end = this.one_keys - 1;
-            this.perform_exchange(start, i, key_pos);
+            /* Is this supposed to be a 2s position? */
+            /* See if there's a 2 in the 1s range, otherwise, swap a 3 in the 1 range */
+            int two_key_loc = -1;
+            int three_key_loc = -1;
+            
+            if (one_key_loc >= this.one_keys && one_key_loc < (this.one_keys+this.two_keys)) {
+
+                for (int j=0; j < this.two_key_locs.size(); ++j) {
+                    /* The key is not in a 1s position */
+                    if (this.two_key_locs.get(j) >= this.one_keys) { continue; }
+                    two_key_loc = this.two_key_locs.get(j);
+
+                    /* swap em */
+                    this.records[one_key_loc] = 2;
+                    this.records[two_key_loc] = 1;
+                    ++this.exchanges;
+                    
+                    /* Update location ArrayLists */
+                    this.remove_one_key_loc(one_key_loc);
+                    this.remove_two_key_loc(two_key_loc);
+
+                    this.one_key_locs.add(two_key_loc);
+                    this.two_key_locs.add(one_key_loc);
+                    --i;
+                    break;
+                }
+                
+                if (two_key_loc == -1) {
+                    for (int j=0; j < this.three_key_locs.size(); ++j) {
+                        /* The key is not in a 1s position */
+                        if (this.three_key_locs.get(j) >= this.one_keys) { continue; }
+                        three_key_loc = this.three_key_locs.get(j);
+
+                        /* swap em */
+                        this.records[one_key_loc] = 3;
+                        this.records[three_key_loc] = 1;
+                        ++this.exchanges;
+
+                        /* Update location ArrayLists */
+                        this.remove_one_key_loc(one_key_loc);
+                        this.remove_three_key_loc(three_key_loc);
+
+                        this.one_key_locs.add(three_key_loc);
+                        this.three_key_locs.add(one_key_loc);
+                        --i;
+                        break;
+                    }
+                }
+            } else {
+                /* There's a 1 in a 3s position */
+                for (int j=0; j < this.three_key_locs.size(); ++j) {
+                    /* The key is not in a 1s position */
+                    if (this.three_key_locs.get(j) >= this.one_keys) { continue; }
+                    three_key_loc = this.three_key_locs.get(j);
+
+                    /* swap em */
+                    this.records[one_key_loc] = 3;
+                    this.records[three_key_loc] = 1;
+                    ++this.exchanges;
+
+                    /* Update location ArrayLists */
+                    this.remove_one_key_loc(one_key_loc);
+                    this.remove_three_key_loc(three_key_loc);
+
+                    this.one_key_locs.add(three_key_loc);
+                    this.three_key_locs.add(one_key_loc);
+                    --i;
+                    break;
+                }
+                
+                if (three_key_loc == -1) {
+                    for (int j=0; j < this.two_key_locs.size(); ++j) {
+                        /* The key is not in a 1s position */
+                        if (this.two_key_locs.get(j) >= this.one_keys) { continue; }
+                        two_key_loc = this.two_key_locs.get(j);
+
+                        /* swap em */
+                        this.records[one_key_loc] = 2;
+                        this.records[two_key_loc] = 1;
+                        ++this.exchanges;
+
+                        /* Update location ArrayLists */
+                        this.remove_one_key_loc(one_key_loc);
+                        this.remove_two_key_loc(two_key_loc);
+
+                        this.one_key_locs.add(two_key_loc);
+                        this.two_key_locs.add(one_key_loc);
+                        --i;
+                        break;
+                    }                    
+                }
+            }
+            
+            // this.print_records();
         }
         
+        /* 
+            At this point - we only need to look for 2s in 3 positions, and swap them
+            with the the 3s in the 2 positions.
+        */
         for (int i=0; i < this.two_key_locs.size(); ++i) {
-            int key_pos = this.two_key_locs.get(i);
-            if (key_pos >= this.one_keys && key_pos < (this.one_keys+this.two_keys)) { continue; }
+            int two_key_loc = this.two_key_locs.get(i);
+            boolean is_in_range = this.two_key_locs.get(i) >= this.one_keys;
+            is_in_range = is_in_range && this.two_key_locs.get(i) < (this.one_keys+this.two_keys);
             
-            int start = this.one_keys;
-            int end = (this.one_keys + this.two_keys)-1;
-            this.perform_exchange(start, i, key_pos);
-        }
-    }
-    
-    private void perform_exchange(int start, int key_loc_idx, int key_loc) {
-        int i = start;
-        int out_of_place_record = this.records[key_loc];
-        while (this.records[i] == out_of_place_record) { ++i; }
-        int swap_record = this.records[i];
+            if (is_in_range == true) { continue; }
+            
+            /* Is this supposed to be a 3s position? */
+            if (two_key_loc >= (this.one_keys+this.two_keys)) {
+                for (int j=0; j < this.three_key_locs.size(); ++j) {
+                    if (this.three_key_locs.get(j) >= (this.one_keys+this.two_keys)) { continue; }
+                    int three_key_loc = this.three_key_locs.get(j);
+                    
+                    /* swap em */
+                    this.records[two_key_loc] = 3;
+                    this.records[three_key_loc] = 2;
+                    ++this.exchanges;
 
-        this.records[key_loc] = this.records[i];
-        this.records[i] = out_of_place_record;
-        ++this.exchanges;
-        this.print_records();
+                    /* Update location ArrayLists */
+                    this.remove_two_key_loc(two_key_loc);
+                    this.remove_three_key_loc(three_key_loc);
 
-        /* Update locations  */
-        switch (out_of_place_record) {
-            case 1:
-                this.one_key_locs.remove(key_loc_idx);
-                this.one_key_locs.add(i);
-                break;
-            case 2:
-                this.two_key_locs.remove(key_loc_idx);
-                this.two_key_locs.add(i);
-                break;
-            case 3:
-                this.three_key_locs.remove(key_loc_idx);
-                this.three_key_locs.add(i);
-                break;
-        }
-        
-        switch (swap_record) {
-            case 1:
-                this.remove_one_key_loc(i);
-                this.one_key_locs.add(key_loc);
-                break;
-            case 2:
-                this.remove_two_key_loc(i);
-                this.two_key_locs.add(key_loc);
-                break;
-            case 3:
-                this.remove_three_key_loc(i);
-                this.three_key_locs.add(key_loc);
-                break;
+                    this.two_key_locs.add(three_key_loc);
+                    this.three_key_locs.add(two_key_loc);
+                }
+            } else { System.out.println("eek..."); }
+            // this.print_records();
+            
         }
     }
     
@@ -126,10 +199,10 @@ public class sort3 {
         }
         System.out.println();
         
-        // for (int i=0; i < this.one_key_locs.size(); ++i) {
-        //     System.out.println(this.one_key_locs.get(i));
-        // }
-        // System.out.println();
+        for (int i=0; i < this.one_key_locs.size(); ++i) {
+            System.out.print(this.one_key_locs.get(i)+", ");
+        }
+        System.out.println();
     }
     
     private boolean records_sorted() {
@@ -139,7 +212,7 @@ public class sort3 {
         }
         for (int i=this.one_keys; i < (this.one_keys+this.two_keys); ++i) { 
             if (this.records[i] != 2) { return false; }
-        }    
+        }
         return true;
     }
 
@@ -172,10 +245,11 @@ public class sort3 {
             }
         }
         
-        sorter.print_records();
+        // sorter.print_records();
         sorter.perform_sort();
         while (sorter.records_sorted() == false) {
             sorter.perform_sort();
+            // sorter.print_records();
         }
         
         out.println(sorter.exchanges);
