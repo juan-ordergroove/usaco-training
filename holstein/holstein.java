@@ -14,7 +14,9 @@ public class holstein {
     public int v;
     public int[] min_vit_reqs;
     public int[][] feed_vit_val;
+
     public int scoops;
+    public int[] vit_val;
     public List<Integer> feed_path;
     
     public holstein() {
@@ -51,6 +53,32 @@ public class holstein {
         the solution may yield a better distribution of vitamin consumption, therefore
         if (scoops > this.scoops) { return; } was changed to if (scoops >= this.scoops) { return; }
         The final check for overriding a given solution is that we're using "the smallest feedtype numbers"
+        
+        -- part 2
+        Great..now what about the following:
+        The 5 value feed has a more optimal vitamin value, then the 4 feed vitamin value
+
+        ----- our output ---------
+        5_2_4_6_7_9
+        ---- your output ---------
+        4_1_7_7_7
+        --------------------------
+
+        ------ Data for Run 6 ------
+        5 
+        163 221 146 425 509 
+        10 
+        98 69 68 18 129 
+        132 185 196 64 176 
+        40 70 57 9 115 
+        73 189 145 87 117 
+        45 114 45 0 18 
+        137 137 174 73 178 
+        48 143 33 142 192 
+        33 107 148 2 158 
+        32 42 153 90 41 
+        165 81 156 7 121 
+        ----------------------------        
     */
     private void search_variations(int[] vit_val, int feed_type, List<Integer> feed_path, int scoops, List<Integer> feed_zero_skipped) {
 
@@ -65,11 +93,18 @@ public class holstein {
 
         for (Integer p : feed_list) { System.out.print(p+" "); }
         System.out.println();
-
+        
         if (this.finished(vit_val_copy, feed_type) == true) {
             if (this.zero_check(vit_val_copy, feed_type) == true) {
-                this.scoops = scoops;
-                this.feed_path = this.copy_list(feed_path);
+                if (scoops < this.scoops) {
+                    this.scoops = scoops;
+                    this.feed_path = this.copy_list(feed_path);
+                    this.vit_val = vit_val.clone();
+                } else if (this.min_vals(vit_val_copy) == true) {
+                    this.scoops = scoops;
+                    this.feed_path = this.copy_list(feed_path);
+                    this.vit_val = vit_val.clone();
+                }
                 return;
             } else { feed_zero_skipped.add(feed_type); }
         }
@@ -100,6 +135,17 @@ public class holstein {
         return true;
     }
     
+    private boolean min_vals(int[] vit_val) {
+        int vit_val_sum = 0;
+        for (int i=0; i < vit_val.length; ++i) { vit_val_sum += vit_val[i]; }
+
+        int obj_vit_val_sum = 0;
+        for (int i=0; i < this.vit_val.length; ++i) { obj_vit_val_sum += this.vit_val[i]; }
+
+        System.out.println(vit_val_sum+" >? "+obj_vit_val_sum);
+        return (vit_val_sum > obj_vit_val_sum);
+    }
+    
     private boolean zero_check(int[] vit_val, int feed_type) {
         for (int i=0; i < this.feed_vit_val[feed_type].length; ++i) {
             if (this.feed_vit_val[feed_type][i] > 0) { continue; }
@@ -119,10 +165,13 @@ public class holstein {
     	PrintWriter out = new PrintWriter(new FileWriter("holstein.out"));
         
         holstein h = new holstein();
-        
         h.v = Integer.parseInt(in.readLine());
+
         final int V = h.v;
         h.min_vit_reqs = new int[V];
+        
+        h.vit_val = new int[V];
+        for (int i=0; i < h.v; ++i) { h.vit_val[i] = -20000; } /* The inputs aren't anywhere near this value */
         
         StringTokenizer t = new StringTokenizer(in.readLine());
         for (int i=0; i < h.v; ++i) { h.min_vit_reqs[i] = Integer.parseInt(t.nextToken()); }
