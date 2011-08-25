@@ -10,77 +10,78 @@ import java.util.*;
 
 public class runround {
     
-    private String m;
-    private int len;
-    private int[] m_arr;
-    private boolean[] pos_seen;
+    private int m;
+    private int runround;
     private boolean[] digit_seen;
 
     public runround(String m) {
         
-        this.m = m;
-        this.len = m.length();
-        this.m_arr = new int[m.length()+1];
-        this.pos_seen = new boolean[m.length()];
-        this.digit_seen = new boolean[9];
+        this.m = Integer.parseInt(m);
+        this.runround = Integer.MAX_VALUE;
+        this.digit_seen = new boolean[10];
         
-        long m_copy = Long.parseLong(this.m);
-        for (int i=0; i < m.length(); ++i) { this.pos_seen[i] = false; }
-        for (int i=0; m_copy > 0; ++i) {
-            this.m_arr[i] = (int)m_copy%10;
-            this.digit_seen[this.m_arr[i]] = true;
-            // System.out.println(this.m_arr[i]);
-            m_copy /= 10;
+        for (int i=0; i < 10; ++i) { this.digit_seen[i] = false; }
+        for (int i=1; i <= 9; ++i) {
+            this.digit_seen[i] = true;
+            this.find_runround(i);
+            this.digit_seen[i] = false;
         }
-        
-        this.find_runround(this.get_next_idx());
     }
     
-    private void find_runround(int idx) {
+    private void find_runround(int n) {
+        if (n > this.runround) { return; }
+        if (n > this.m) {
+            if (this.is_runround(n)) {
+                this.runround = n;
+                return;
+            }
+        }
         
-        int n = this.m_arr[idx];
-        this.pos_seen[idx] = true;
-        // System.out.println(idx+","+n);
-        
-        int distance = n;
-        while (distance > this.len) { distance -= this.len; }
-        int next_pos = (idx - distance >= 0) ? (idx - distance) : (this.len - distance);
-        
-        if (this.pos_seen[next_pos] == true) {
-            // System.out.println("I've already seen index "+next_pos);
-            next_pos = this.get_next_idx();
-            if (next_pos == -1) { return; }
-            
-            this.digits_seen[n] = false;
-            this.digits_seen[this.len - next_pos + idx] = true;
-
-            this.m_arr[idx] = (this.len - next_pos + idx);
-            this.find_runround(next_pos);
-        } else { this.find_runround(next_pos); }
-        
-        return;
+        for (int i=1; i <= 9; ++i) {
+            if (this.digit_seen[i] == false) {
+                this.digit_seen[i] = true;
+                this.find_runround(n*10+i);
+                this.digit_seen[i] = false;
+            }
+        }
     }
     
-    private int get_next_idx() {
-        for (int i=this.len-1; i >= 0; --i) {
-            if (this.pos_seen[i] == false) { return i; }
-        }
-        return -1;
-    }
+    private boolean is_runround(int n) {
+        // System.out.println("checking: "+n);
 
+        int n_copy = n;
+        List<Integer> n_arr = new ArrayList();
+        while (n_copy > 0) {
+            n_arr.add(n_copy%10);
+            n_copy /= 10;
+        }
+        
+        final int LEN = n_arr.size();
+        boolean[] pos_seen = new boolean[LEN];
+        for (int i=0; i < LEN; ++i) { pos_seen[i] = false; }
+        
+        int cycleIdx = LEN-1;
+        int counter = 0;
+        while (pos_seen[cycleIdx] == false) {
+            counter++;
+            pos_seen[cycleIdx] = true;
+
+            int distance = n_arr.get(cycleIdx) % LEN;
+            cycleIdx = (cycleIdx - distance >= 0) ? (cycleIdx - distance) : (LEN - (distance - cycleIdx));
+        }
+        
+        return (cycleIdx == LEN-1) && (counter == LEN);
+    }
+    
     public static void main(String[] args) throws IOException {
         BufferedReader in = new BufferedReader(new FileReader("runround.in"));
         PrintWriter out = new PrintWriter(new FileWriter("runround.out"));
         
         String m = in.readLine();
         runround r = new runround(m);
-        for (int i=r.m_arr.length-1; i >=0; --i) {
-            if (r.m_arr[i] == 0) { continue; }
-            // System.out.print(r.m_arr[i]);
-            out.print(r.m_arr[i]);
-        }
-        // System.out.println();
-        out.println();
+
+        // System.out.println(r.runround);
+        out.println(r.runround);
         
         in.close();
         out.close();
