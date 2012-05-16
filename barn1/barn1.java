@@ -2,6 +2,7 @@
 ID: jmg20482
 LANG: JAVA
 TASK: barn1
+this is a test
 */
 
 import java.io.*;
