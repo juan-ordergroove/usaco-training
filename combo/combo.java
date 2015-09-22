@@ -46,7 +46,7 @@ class ComboSolver {
     private void solve_combination(Combination c, int d1_step, int d2_step, int d3_step) {
         this.solutions.put(c, true);
         System.out.println(d1_step + " " + d2_step + " " + d3_step);
-        if (c.d1 - d1_step >= -2 && c.d2 - d1_step <= 2) {
+        if (Math.abs(c.d1 - d1_step) <= 2) {
             int d1_up = (c.d1 + d1_step + 1) % this.dials;
             int d2_up = (c.d2 + d2_step) % this.dials;
             int d3_up = (c.d3 + d3_step) % this.dials;;
