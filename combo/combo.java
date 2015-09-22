@@ -31,6 +31,7 @@ public class combo {
 
 class ComboSolver {
     private int dials;
+    private Combination starter;
     private HashMap<Combination, Boolean> solutions;
 
     public ComboSolver(int dials) {
@@ -38,21 +39,21 @@ class ComboSolver {
         this.solutions = new HashMap<Combination, Boolean>();
     }
 
-    public void solve_combination(Combination combination) {
-        //this.combination = combination;
-        this.solve_combination(combination, 0, 0, 0);
+    public void solve_combination(Combination c) {
+        this.starter = new Combination(c);
+        this.solve_combination(c, 0, 0, 0);
     }
 
     private void solve_combination(Combination c, int d1_step, int d2_step, int d3_step) {
         this.solutions.put(c, true);
         System.out.println(d1_step + " " + d2_step + " " + d3_step);
-        if (Math.abs(c.d1 - d1_step) <= 2) {
-            int d1_up = (c.d1 + d1_step + 1) % this.dials;
+        if (Math.abs(this.starter.d1 - c.d1) <= 2) {
+            /*int d1_up = (c.d1 + d1_step + 1) % this.dials;
             int d2_up = (c.d2 + d2_step) % this.dials;
             int d3_up = (c.d3 + d3_step) % this.dials;;
             Combination next_combination_up = new Combination(d1_up, d2_up, d3_up);
             this.solve_combination(next_combination_up, d1_step + 1, d2_step, d3_step);
-
+*/
             int d1_down = (c.d1 - d1_step - 1) % this.dials;
             int d2_down = (c.d2 - d2_step) % this.dials;
             int d3_down = (c.d3 - d3_step) % this.dials;
@@ -111,6 +112,12 @@ class Combination {
             Integer.parseInt(t.nextToken()) - 1,
             Integer.parseInt(t.nextToken()) - 1
         );
+    }
+
+    public Combination(Combination c) {
+        this.d1 = c.d1;
+        this.d2 = c.d2;
+        this.d3 = c.d3;
     }
 
     public Combination(int d1, int d2, int d3) {
