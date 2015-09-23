@@ -18,7 +18,7 @@ public class combo {
 
         ComboSolver combo_solver = new ComboSolver(dials);
         combo_solver.solve_combination(john_combo);
-        combo_solver.solve_combination(master_combo);
+        //combo_solver.solve_combination(master_combo);
         System.out.println(combo_solver.count_solutions());
 
         PrintWriter out = new PrintWriter(new FileWriter("combo.out"));
@@ -40,55 +40,20 @@ class ComboSolver {
     }
 
     public void solve_combination(Combination c) {
-        this.starter = new Combination(c);
         this.solve_combination(c, 0, 0, 0);
     }
 
     private void solve_combination(Combination c, int d1_step, int d2_step, int d3_step) {
-        this.solutions.put(c, true);
-        System.out.println(d1_step + " " + d2_step + " " + d3_step);
-        if (Math.abs(this.starter.d1 - c.d1) <= 2) {
-            /*int d1_up = (c.d1 + d1_step + 1) % this.dials;
-            int d2_up = (c.d2 + d2_step) % this.dials;
-            int d3_up = (c.d3 + d3_step) % this.dials;;
+        if (Math.abs(d1_step) <= 2) {
+            //System.out.println("Adding: " + c.as_string());
+            //System.out.println(String.join(",", String.valueOf(d1_step + 1), String.valueOf(d2_step), String.valueOf(d3_step)));
+            this.solutions.put(c, true);
+            int d1_up = (this.starter.d1 + d1_step + 1) % this.dials;
+            int d2_up = (this.starter.d2 + d2_step) % this.dials;
+            int d3_up = (this.starter.d3 + d3_step) % this.dials;
             Combination next_combination_up = new Combination(d1_up, d2_up, d3_up);
             this.solve_combination(next_combination_up, d1_step + 1, d2_step, d3_step);
-*/
-            int d1_down = (c.d1 - d1_step - 1) % this.dials;
-            int d2_down = (c.d2 - d2_step) % this.dials;
-            int d3_down = (c.d3 - d3_step) % this.dials;
-            Combination next_combination_down = new Combination(d1_down, d2_down, d3_down);
-            this.solve_combination(next_combination_down, d1_step - 1, d2_step, d3_step);
         }
-        /*
-        if (d2_step >= -2 || d2_step <= 2) {
-            int d1_up = (c.d1 + d1_step) % this.dials;
-            int d2_up = (c.d2 + d2_step + 1) % this.dials;
-            int d3_up = (c.d3 + d3_step) % this.dials;;
-            Combination next_combination_up = new Combination(d1_up, d2_up, d3_up);
-            this.solve_combination(next_combination_up, d1_step, d2_step + 1, d3_step);
-
-            int d1_down = (c.d1 - d1_step) % this.dials;
-            int d2_down = (c.d2 - d2_step - 1) % this.dials;
-            int d3_down = (c.d3 - d3_step) % this.dials;
-            Combination next_combination_down = new Combination(d1_down, d2_down, d3_down);
-            this.solve_combination(next_combination_down, d1_step, d2_step - 1, d3_step);
-        }
-
-        if (d3_step >= -2 || d3_step <= 2) {
-            int d1_up = (c.d1 + d1_step) % this.dials;
-            int d2_up = (c.d2 + d2_step) % this.dials;
-            int d3_up = (c.d3 + d3_step + 1) % this.dials;;
-            Combination next_combination_up = new Combination(d1_up, d2_up, d3_up);
-            this.solve_combination(next_combination_up, d1_step, d2_step, d3_step + 1);
-
-            int d1_down = (c.d1 - d1_step) % this.dials;
-            int d2_down = (c.d2 - d2_step) % this.dials;
-            int d3_down = (c.d3 - d3_step - 1) % this.dials;
-            Combination next_combination_down = new Combination(d1_down, d2_down, d3_down);
-            this.solve_combination(next_combination_down, d1_step, d2_step, d3_step - 1);
-        }
-        */
     }
 
     public int count_solutions() {
@@ -125,5 +90,14 @@ class Combination {
         this.d1 = d1;
         this.d2 = d2;
         this.d3 = d3;
+    }
+
+    public String as_string() {
+        return String.join(
+            ",",
+            String.valueOf(this.d1),
+            String.valueOf(this.d2),
+            String.valueOf(this.d3)
+        );
     }
 }
