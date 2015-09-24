@@ -19,7 +19,7 @@ public class combo {
         Cracker cracker = new Cracker(dials);
         cracker.crack_combination(john_combo);
         cracker.crack_combination(master_combo);
-        System.out.println(cracker.count_solutions());
+        //System.out.println(cracker.count_solutions());
 
         PrintWriter out = new PrintWriter(new FileWriter("combo.out"));
         out.println(cracker.count_solutions());
@@ -62,11 +62,12 @@ class Cracker {
         int d2 = (c.d2 + d2_step) % this.dials;
         int d3 = (c.d3 + d3_step) % this.dials;
         Combination cracked = new Combination(d1, d2, d3);
+        //System.out.println("Adding: " + cracked.toString());
         this.solutions.put(cracked, true);
     }
 
     public int count_solutions() {
-        return this.solutions.size() - 1;
+        return this.solutions.size();
     }
 }
 
@@ -100,7 +101,18 @@ class Combination {
         this.d3 = d3;
     }
 
-    public String to_string() {
+    @Override
+    public String toString() {
         return String.valueOf(this.d1) + "," + String.valueOf(this.d2) + "," + String.valueOf(this.d3);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this.toString().equals(o.toString());
     }
 }
