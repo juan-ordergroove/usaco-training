@@ -61,7 +61,11 @@ class Cracker {
         int d1 = (c.d1 + d1_step) % this.dials;
         int d2 = (c.d2 + d2_step) % this.dials;
         int d3 = (c.d3 + d3_step) % this.dials;
-        Combination cracked = new Combination(d1, d2, d3);
+
+        d1 = (d1 < 0) ? (this.dials + d1) : d1;
+        d2 = (d2 < 0) ? (this.dials + d2) : d2;
+        d3 = (d3 < 0) ? (this.dials + d3) : d3;
+        Combination cracked = new Combination(Math.abs(d1), Math.abs(d2), Math.abs(d3));
         //System.out.println("Adding: " + cracked.toString());
         this.solutions.put(cracked, true);
     }
