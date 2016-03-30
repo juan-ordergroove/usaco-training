@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 typedef struct Wormholes{
-    int x;
-    int y;
+    long x;
+    long y;
     int seen;
     int paired_with;
 } Wormhole;
@@ -11,21 +11,28 @@ typedef struct Wormholes{
 typedef struct Farms {
     Wormhole *wormholes;
     int num_wormholes;
+    int loops;
+    int loop_found;
 } Farm;
 
-void generate_pairs(Farm farm, int to_pair_idx);
 int find_unpaired_wormhole(Farm farm);
+void generate_pairs(Farm farm, int to_pair_idx);
+void analyze_farm(Farm farm);
+
 int main() {
     int i;
     Farm farm;
     FILE *infile;
+
+    farm.loops = 0;
+    farm.loop_found = 0;
 
     infile = fopen("wormhole.in", "r");
     fscanf(infile, "%d", &farm.num_wormholes);
 
     farm.wormholes = malloc(farm.num_wormholes * sizeof(Wormhole));
     for (i=0; i < farm.num_wormholes; ++i) {
-        fscanf(infile, "%d %d", &farm.wormholes[i].x, &farm.wormholes[i].y);
+        fscanf(infile, "%ld %ld", &farm.wormholes[i].x, &farm.wormholes[i].y);
         farm.wormholes[i].seen = 0;
         farm.wormholes[i].paired_with = -1;
     }
@@ -38,20 +45,11 @@ int main() {
 }
 
 void generate_pairs(Farm farm, int to_pair_idx) {
-    int i, j, next_to_pair_idx;
+    int i, next_to_pair_idx;
 
     /* Break out state - all wormholes have been paired, analyze farm */
     if (to_pair_idx == -1) {
-        //analyze_farm(farm);
-        for (j=0; j < farm.num_wormholes; ++j) {
-            printf("wormhole[%d] @ (%d, %d) is paired with wormhold[%d] @ (%d, %d)\n",
-                  j, farm.wormholes[j].x, farm.wormholes[j].y,
-                  farm.wormholes[j].paired_with,
-                  farm.wormholes[farm.wormholes[j].paired_with].x,
-                  farm.wormholes[farm.wormholes[j].paired_with].y
-                  );
-        }
-        printf("\n");
+        analyze_farm(farm);
         return;
     }
 
@@ -77,4 +75,15 @@ int find_unpaired_wormhole(Farm farm) {
         }
     }
     return -1;
+}
+
+void analyze_farm(Farm farm) {
+    int j;
+    for (j=0; j < farm.num_wormholes; ++j) {
+        // traverse_farm();
+        if (farm.loop_found == 1) {
+            farm.loop_found = 0;
+            return;
+        }
+    }
 }
