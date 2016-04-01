@@ -19,7 +19,7 @@ int find_unpaired_wormhole(Farm farm);
 int find_intersecting_wormhole(Farm farm, int x, int y);
 void generate_pairs(Farm farm, int to_pair_idx);
 void analyze_farm(Farm farm);
-void traverse_farm(Farm farm, int x, int y);
+void traverse_farm(Farm farm, int i);
 
 int main() {
     int i;
@@ -83,11 +83,7 @@ int find_unpaired_wormhole(Farm farm) {
 void analyze_farm(Farm farm) {
     int i;
     for (i=0; i < farm.num_wormholes; ++i) {
-        farm.wormholes[i].seen = 1;
-        traverse_farm(farm,
-                      farm.wormholes[i].x,
-                      farm.wormholes[i].y);
-        farm.wormholes[i].seen = 0;
+        traverse_farm(farm, i);
         if (farm.loop_found == 1) {
             farm.loop_found = 0;
             return;
@@ -95,24 +91,22 @@ void analyze_farm(Farm farm) {
     }
 }
 
-void traverse_farm(Farm farm, int x, int y) {
-    int next;
-    next = find_intersecting_wormhole(farm, x, y);
-    if (next == -1) {
-        return;
-    }
-
-    if (farm.wormholes[next].seen == 1) {
+void traverse_farm(Farm farm, int i) {
+    int next, x, y;
+    if (farm.wormholes[i].seen == 1) {
         farm.loop_found = 1;
         ++farm.loops;
         return;
     }
 
-    farm.wormholes[next].seen = 1;
-    traverse_farm(farm,
-                  farm.wormholes[next].x,
-                  farm.wormholes[next].y);
-    farm.wormholes[next].seen = 0;
+    farm.wormholes[i].seen = 1;
+    x = farm.wormholes[i].x;
+    y = farm.wormholes[i].y;
+    next = find_intersecting_wormhole(farm, x, y);
+    if (next == -1) {
+        return;
+    }
+    traverse_farm(farm, next);
 }
 
 int find_intersecting_wormhole(Farm farm, int x, int y) {
