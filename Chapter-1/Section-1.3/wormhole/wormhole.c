@@ -61,18 +61,24 @@ int main() {
 void generate_pairs(int to_pair_idx) {
     int i, next_to_pair_idx;
 
-    /* Break out state - all wormholes have been paired, analyze farm */
-    if (to_pair_idx == -1) {
-        analyze_farm();
-        return;
-    }
-
     for (i=to_pair_idx+1; i < farm.num_wormholes; ++i) {
         if (farm.wormholes[i].paired_with == -1) {
             farm.wormholes[i].paired_with = to_pair_idx;
             farm.wormholes[to_pair_idx].paired_with = i;
 
-            generate_pairs(find_unpaired_wormhole());
+            analyze_farm();
+            if (farm.loop_found == 1) {
+                ++farm.loops;
+                farm.loop_found = 0;
+                farm.wormholes[i].paired_with = -1;
+                farm.wormholes[to_pair_idx].paired_with = -1;
+                continue;
+            }
+
+            next_to_pair_idx = find_unpaired_wormhole();
+            if (next_to_pair_idx != -1) {
+                generate_pairs(next_to_pair_idx);
+            }// else { analyze_farm(); }
 
             /* Reset the states */
             farm.wormholes[i].paired_with = -1;
@@ -95,10 +101,14 @@ void analyze_farm() {
     int i;
     print_farm();
     for (i=0; i < farm.num_wormholes; ++i) {
+        if (farm.wormholes[i].paired_with == -1) {
+            continue;
+        }
+
+        printf("Starting at wormhole[%d] @ (%ld, %ld)\n", i, farm.wormholes[i].x, farm.wormholes[i].y);
         traverse_farm(i);
         if (farm.loop_found == 1) {
-            ++farm.loops;
-            farm.loop_found = 0;
+            printf("Loop found\n");
             printf("\n");
             return;
         }
@@ -121,11 +131,15 @@ void traverse_farm(int i) {
     x = farm.wormholes[paired_with].x;
     y = farm.wormholes[paired_with].y;
     next = find_intersecting_wormhole(x, y);
+    printf("I just teleported from wormhole[%d] @ (%ld, %ld) to wormhole[%d] @ (%ld, %ld)\n",
+           i, farm.wormholes[i].x, farm.wormholes[i].y,
+           paired_with, farm.wormholes[paired_with].x, farm.wormholes[paired_with].y);
     if (next == -1) {
         farm.wormholes[i].seen = 0;
         farm.wormholes[paired_with].seen = 0;
         return;
     }
+    printf("moving to wormhole[%d] @ (%ld, %ld)\n", next, farm.wormholes[next].x, farm.wormholes[next].y);
     traverse_farm(next);
     farm.wormholes[i].seen = 0;
     farm.wormholes[paired_with].seen = 0;
