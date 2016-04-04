@@ -1,3 +1,8 @@
+/*
+ID: jmg20482
+LANG: C
+TASK: wormhole
+*/
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -27,6 +32,7 @@ void print_farm();
 int main() {
     int i;
     FILE *infile;
+    FILE *outfile;
 
     farm.loops = 0;
     farm.loop_found = 0;
@@ -43,7 +49,10 @@ int main() {
     fclose(infile);
 
     generate_pairs(0);
-    printf("%d\n", farm.loops);
+
+    outfile = fopen("wormhole.out", "w");
+    fprintf(outfile, "%d\n", farm.loops);
+    fclose(outfile);
 
     free(farm.wormholes);
     return 0;
