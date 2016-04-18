@@ -90,9 +90,12 @@ void build_base_parent_tree() {
             head = head->left;
             ++height;
         } else {
-            while (head->parent != NULL && head->right != NULL) {
+            while (head->parent != NULL) {
                 head = head->parent;
                 --height;
+                if (head->right == NULL) {
+                    break;
+                }
             }
             printf("i=%d, height=%d\n", i, height);
             head->right = malloc(sizeof(Node));
