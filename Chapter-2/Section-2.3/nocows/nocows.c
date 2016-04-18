@@ -37,6 +37,7 @@ Node *PARENT_TREE = NULL;
 
 void initialize_node(Node *node);
 void build_base_parent_tree();
+void free_tree(Node *head);
 int count_pedigrees();
 int walk_parent_tree();
 
@@ -68,7 +69,7 @@ int count_pedigrees() {
         build_base_parent_tree();
         pedigrees = walk_parent_tree();
     }
-    free(PARENT_TREE);
+    free_tree(PARENT_TREE);
     return pedigrees;
 }
 
@@ -108,4 +109,14 @@ void build_base_parent_tree() {
 
 int walk_parent_tree(Node *parent_tree) {
     return 0;
+}
+
+void free_tree(Node *head) {
+    if (head->left != NULL) {
+        free_tree(head->left);
+    } else if (head->right != NULL) {
+        free_tree(head->right);
+    } else if (head != NULL) {
+        free(head);
+    }
 }
