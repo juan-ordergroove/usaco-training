@@ -84,11 +84,18 @@ void build_base_parent_tree() {
     Node *head = PARENT_TREE;
     for (i=0; i < PARENT_TREE_N; ++i) {
         if (height < K && head->left == NULL) {
-            printf("i=%d, height=%d\n", i, height);
+            printf("(left) i=%d, height=%d\n", i, height);
             head->left = malloc(sizeof(Node));
             initialize_node(head->left);
             head->left->parent = head;
             head = head->left;
+            ++height;
+        } else if (height < K && head->right == NULL) {
+            printf("(right) i=%d, height=%d\n", i, height);
+            head->right = malloc(sizeof(Node));
+            initialize_node(head->right);
+            head->right->parent = head;
+            head = head->right;
             ++height;
         } else {
             while (head->parent != NULL) {
@@ -98,11 +105,7 @@ void build_base_parent_tree() {
                     break;
                 }
             }
-            printf("i=%d, height=%d\n", i, height);
-            head->right = malloc(sizeof(Node));
-            head->right->parent = head;
-            head = head->right;
-            ++height;
+            --i;
         }
     }
 }
