@@ -108,10 +108,12 @@ void build_base_parent_tree() {
         head_can_create_right_child = height < K && head->right == NULL;
 
         if (head_can_create_left_child) {
+            printf("(left) i=%d height=%d\n", i, height);
             head->left = initialize_child(head, head->left);
             head = head->left;
             ++height;
         } else if (head_can_create_right_child) {
+            printf("(right) i=%d height=%d\n", i, height);
             head->right = initialize_child(head, head->right);
             head = head->right;
             ++height;
@@ -122,7 +124,8 @@ void build_base_parent_tree() {
     }
 }
 
-int walk_parent_tree(Node *parent_tree) {
+int walk_parent_tree() {
+    printf("%d %d %d\n", (int)PARENT_TREE, (int)PARENT_TREE->left, (int)PARENT_TREE->right);
     return 0;
 }
 
