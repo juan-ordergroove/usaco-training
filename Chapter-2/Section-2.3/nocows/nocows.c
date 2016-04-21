@@ -24,7 +24,7 @@ The number of nodes in the PARENT_TREE, PARENT_TREE_N = (N - 1) / 2.
 The number of distinct node placements in the PARENT_TREE is the solution.
 
 There is an upper bound, MAX_NODES, for counting pedigrees given
-N nodes of height K: N >= 2^K cannot fit in a binary tree of height K.
+N nodes of height K: N >= 2^(K+1) cannot fit in a binary tree of height K.
 */
 
 typedef struct Nodes {
