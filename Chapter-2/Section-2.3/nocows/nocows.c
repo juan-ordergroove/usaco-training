@@ -109,14 +109,10 @@ void build_base_parent_tree() {
 
         if (head_can_create_left_child) {
             head->left = initialize_child(head, head->left);
-            printf("i=%d (left) height=%d head=%d head->parent=%d, head->left=%d head->right=%d\n",
-                   i, height, (int)head, (int)head->parent, (int)head->left, (int)head->right);
             head = head->left;
             ++height;
         } else if (head_can_create_right_child) {
             head->right = initialize_child(head, head->right);
-            printf("i=%d (right) height=%d head=%d head->parent=%d  head->left=%d head->right=%d\n",
-                   i, height, (int)head, (int)head->parent, (int)head->left, (int)head->right);
             head = head->right;
             ++height;
         } else {
