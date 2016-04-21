@@ -36,6 +36,7 @@ int N, K, MAX_NODES, PARENT_TREE_N;
 Node *PARENT_TREE = NULL;
 
 void initialize_node(Node *node);
+Node *initialize_child(Node *parent, Node *child);
 void build_base_parent_tree();
 void free_tree(Node *head);
 int count_pedigrees();
@@ -79,22 +80,25 @@ void initialize_node(Node *node) {
     node->right = NULL;
 }
 
+Node *initialize_child(Node *parent, Node *child) {
+    child = malloc(sizeof(Node));
+    initialize_node(child);
+    child->parent = parent;
+    return child;
+}
+
 void build_base_parent_tree() {
     int i = 0, height = 0;
     Node *head = PARENT_TREE;
     for (i=0; i < PARENT_TREE_N; ++i) {
         if (height < K && head->left == NULL) {
             printf("(left) i=%d, height=%d\n", i, height);
-            head->left = malloc(sizeof(Node));
-            initialize_node(head->left);
-            head->left->parent = head;
+            head->left = initialize_child(head, head->left);
             head = head->left;
             ++height;
         } else if (height < K && head->right == NULL) {
             printf("(right) i=%d, height=%d\n", i, height);
-            head->right = malloc(sizeof(Node));
-            initialize_node(head->right);
-            head->right->parent = head;
+            head->right = initialize_child(head, head->right);
             head = head->right;
             ++height;
         } else {
