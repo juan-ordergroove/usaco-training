@@ -99,23 +99,23 @@ Node *find_parent_with_empty_right_child(Node *head, int *height) {
 }
 
 void build_base_parent_tree() {
-    int i = 0, height = 0;
+    int i = 0, height = 1;
     int head_can_create_left_child, head_can_create_right_child;
     Node *head = PARENT_TREE;
 
-    for (i=0; i < PARENT_TREE_N; ++i) {
+    for (i=1; i < PARENT_TREE_N; ++i) {
         head_can_create_left_child = height < K && head->left == NULL;
         head_can_create_right_child = height < K && head->right == NULL;
 
         if (head_can_create_left_child) {
             head->left = initialize_child(head, head->left);
-            printf("(left) i=%d height=%d head=%d head->parent=%d, head->left=%d head->right=%d\n",
+            printf("i=%d (left) height=%d head=%d head->parent=%d, head->left=%d head->right=%d\n",
                    i, height, (int)head, (int)head->parent, (int)head->left, (int)head->right);
             head = head->left;
             ++height;
         } else if (head_can_create_right_child) {
             head->right = initialize_child(head, head->right);
-            printf("(right) i=%d height=%d head=%d head->parent=%d  head->left=%d head->right=%d\n",
+            printf("i=%d (right) height=%d head=%d head->parent=%d  head->left=%d head->right=%d\n",
                    i, height, (int)head, (int)head->parent, (int)head->left, (int)head->right);
             head = head->right;
             ++height;
@@ -127,7 +127,7 @@ void build_base_parent_tree() {
 }
 
 int walk_parent_tree() {
-    printf("PARENT_TREE=%d PARENT_TREE->parent=%d PARENT_TREE->left=%d PARENT_TREE->right=%d\n",
+    printf("\nPARENT_TREE=%d PARENT_TREE->parent=%d PARENT_TREE->left=%d PARENT_TREE->right=%d\n",
            (int)PARENT_TREE, (int)PARENT_TREE->parent, (int)PARENT_TREE->left, (int)PARENT_TREE->right);
     return 0;
 }
