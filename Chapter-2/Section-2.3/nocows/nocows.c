@@ -88,10 +88,10 @@ Node *initialize_child(Node *parent, Node *child) {
     return child;
 }
 
-Node *find_parent_with_empty_right_child(Node *head, int *height) {
+Node *get_parent_with_empty_right_child(Node *head, int *current_height) {
     while (head->parent != NULL) {
         head = head->parent;
-        *height = *height - 1;
+        *current_height = *current_height - 1;
         if (head->right == NULL) {
             break;
         }
@@ -99,29 +99,29 @@ Node *find_parent_with_empty_right_child(Node *head, int *height) {
     return head;
 }
 
-int head_can_create_child(Node *child, int height) {
-    if (height < K && child == NULL) {
+int head_can_create_child(Node *child, int current_height) {
+    if (current_height < K && child == NULL) {
         return 1;
     }
     return 0;
 }
 
 void build_base_parent_tree() {
-    int i = 0, height = 1;
+    int i = 0, current_height = 1;
     int head_can_create_left_child, head_can_create_right_child;
     Node *head = PARENT_TREE;
 
     for (i=1; i < PARENT_TREE_N; ++i) {
-        if (head_can_create_child(head->left, height)) {
+        if (head_can_create_child(head->left, current_height)) {
             head->left = initialize_child(head, head->left);
             head = head->left;
-            ++height;
-        } else if (head_can_create_child(head->right, height)) {
+            ++current_height;
+        } else if (head_can_create_child(head->right, current_height)) {
             head->right = initialize_child(head, head->right);
             head = head->right;
-            ++height;
+            ++current_height;
         } else {
-            head = find_parent_with_empty_right_child(head, &height);
+            head = get_parent_with_empty_right_child(head, &current_height);
             --i; // Reset the counter - we need to retry inserting "this" node
         }
     }
