@@ -70,6 +70,7 @@ int count_pedigrees() {
         build_base_parent_tree();
         pedigrees = walk_parent_tree();
     }
+
     free_tree(PARENT_TREE);
     return pedigrees;
 }
@@ -98,20 +99,24 @@ Node *find_parent_with_empty_right_child(Node *head, int *height) {
     return head;
 }
 
+int head_can_create_child(Node *child, int height) {
+    if (height < K && child == NULL) {
+        return 1;
+    }
+    return 0;
+}
+
 void build_base_parent_tree() {
     int i = 0, height = 1;
     int head_can_create_left_child, head_can_create_right_child;
     Node *head = PARENT_TREE;
 
     for (i=1; i < PARENT_TREE_N; ++i) {
-        head_can_create_left_child = height < K && head->left == NULL;
-        head_can_create_right_child = height < K && head->right == NULL;
-
-        if (head_can_create_left_child) {
+        if (head_can_create_child(head->left, height)) {
             head->left = initialize_child(head, head->left);
             head = head->left;
             ++height;
-        } else if (head_can_create_right_child) {
+        } else if (head_can_create_child(head->right, height)) {
             head->right = initialize_child(head, head->right);
             head = head->right;
             ++height;
@@ -122,10 +127,16 @@ void build_base_parent_tree() {
     }
 }
 
+
+
 int walk_parent_tree() {
+    int pedigrees = 1;
     printf("\nPARENT_TREE=%d PARENT_TREE->parent=%d PARENT_TREE->left=%d PARENT_TREE->right=%d\n",
            (int)PARENT_TREE, (int)PARENT_TREE->parent, (int)PARENT_TREE->left, (int)PARENT_TREE->right);
-    return 0;
+    // While there is a node on the left side of the tree:
+    //      What are all the positions to its right it can occupy,
+    //      END STATE: the node reaches the right-most position
+    return pedigrees;
 }
 
 void free_tree(Node *head) {
