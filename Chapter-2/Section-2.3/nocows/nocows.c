@@ -41,8 +41,7 @@ typedef struct Trees {
     int max_nodes;
 } Tree;
 
-Tree PARENT_TREE2;
-Node *PARENT_TREE = NULL;
+Tree PARENT_TREE;
 
 void initialize_node(Node *node);
 Node *initialize_child(Node *parent, Node *child);
@@ -59,13 +58,13 @@ int main() {
     fscanf(infile, "%d %d", &n, &k);
     fclose(infile);
 
-    PARENT_TREE2.n = n;
-    PARENT_TREE2.parent_n = (n - 1) / 2;
-    PARENT_TREE2.k = k;
-    PARENT_TREE2.max_nodes = (1 << (k+1)) - 1;
+    PARENT_TREE.n = n;
+    PARENT_TREE.parent_n = (n - 1) / 2;
+    PARENT_TREE.k = k;
+    PARENT_TREE.max_nodes = (1 << (k+1)) - 1;
 
     printf("N=%d, K=%d, MAX_NODES=%d, PARENT_TREE_N=%d\n",
-           PARENT_TREE2.n, PARENT_TREE2.k, PARENT_TREE2.max_nodes, PARENT_TREE2.n);
+           PARENT_TREE.n, PARENT_TREE.k, PARENT_TREE.max_nodes, PARENT_TREE.parent_n);
 
     outfile = fopen("nocows.out", "w");
     fprintf(outfile, "%d\n", count_pedigrees());
@@ -76,15 +75,15 @@ int main() {
 
 int count_pedigrees() {
     int pedigrees = 0;
-    PARENT_TREE = malloc(sizeof(Node));
-    initialize_node(PARENT_TREE);
+    PARENT_TREE.head = malloc(sizeof(Node));
+    initialize_node(PARENT_TREE.head);
 
-    if (PARENT_TREE2.n <= PARENT_TREE2.max_nodes) {
+    if (PARENT_TREE.n <= PARENT_TREE.max_nodes) {
         build_base_parent_tree();
         pedigrees = walk_parent_tree();
     }
 
-    free_tree(PARENT_TREE);
+    free_tree(PARENT_TREE.head);
     return pedigrees;
 }
 
@@ -113,7 +112,7 @@ Node *get_parent_with_empty_right_child(Node *head, int *current_height) {
 }
 
 int head_can_create_child(Node *child, int current_height) {
-    if (current_height < PARENT_TREE2.k && child == NULL) {
+    if (current_height < PARENT_TREE.k && child == NULL) {
         return 1;
     }
     return 0;
@@ -122,9 +121,9 @@ int head_can_create_child(Node *child, int current_height) {
 void build_base_parent_tree() {
     int i = 0, current_height = 1;
     int head_can_create_left_child, head_can_create_right_child;
-    Node *head = PARENT_TREE;
+    Node *head = PARENT_TREE.head;
 
-    for (i=1; i < PARENT_TREE2.parent_n; ++i) {
+    for (i=1; i < PARENT_TREE.parent_n; ++i) {
         if (head_can_create_child(head->left, current_height)) {
             head->left = initialize_child(head, head->left);
             head = head->left;
@@ -144,8 +143,9 @@ void build_base_parent_tree() {
 
 int walk_parent_tree() {
     int pedigrees = 1;
-    printf("\nPARENT_TREE=%d PARENT_TREE->parent=%d PARENT_TREE->left=%d PARENT_TREE->right=%d\n",
-           (int)PARENT_TREE, (int)PARENT_TREE->parent, (int)PARENT_TREE->left, (int)PARENT_TREE->right);
+    Node *head = PARENT_TREE.head;
+    printf("head->parent=%d head=%d head->left=%d head->right=%d\n",
+           (int)head->parent, (int)head, (int)head->left, (int)head->right);
     // While there is a node on the left side of the tree:
     //      What are all the positions to its right it can occupy,
     //      END STATE: the node reaches the right-most position
