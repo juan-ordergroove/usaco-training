@@ -42,6 +42,7 @@ typedef struct Trees {
 } Tree;
 
 Tree PARENT_TREE;
+static const int MODULO_VALUE = 9901;
 
 void initialize_node(Node *node);
 Node *initialize_child(Node *parent, Node *child);
@@ -67,7 +68,7 @@ int main() {
            PARENT_TREE.n, PARENT_TREE.k, PARENT_TREE.max_nodes, PARENT_TREE.parent_n);
 
     outfile = fopen("nocows.out", "w");
-    fprintf(outfile, "%d\n", count_pedigrees());
+    fprintf(outfile, "%d\n", count_pedigrees() % MODULO_VALUE);
     fclose(outfile);
 
     return 0;
