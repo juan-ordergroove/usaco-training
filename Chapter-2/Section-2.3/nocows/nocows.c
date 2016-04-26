@@ -32,7 +32,16 @@ typedef struct Nodes {
     struct Nodes *left;
     struct Nodes *right;
 } Node;
-int N, K, MAX_NODES, PARENT_TREE_N;
+
+typedef struct Trees {
+    struct Nodes *head;
+    int parent_n;
+    int n;
+    int k;
+    int max_nodes;
+} Tree;
+
+Tree PARENT_TREE2;
 Node *PARENT_TREE = NULL;
 
 void initialize_node(Node *node);
@@ -43,16 +52,20 @@ int count_pedigrees();
 int walk_parent_tree();
 
 int main() {
+    int n, k;
     FILE *infile, *outfile;
 
     infile = fopen("nocows.in", "r");
-    fscanf(infile, "%d %d", &N, &K);
+    fscanf(infile, "%d %d", &n, &k);
     fclose(infile);
 
-    MAX_NODES = (1 << (K+1)) - 1;
-    PARENT_TREE_N = (N - 1) / 2;
+    PARENT_TREE2.n = n;
+    PARENT_TREE2.parent_n = (n - 1) / 2;
+    PARENT_TREE2.k = k;
+    PARENT_TREE2.max_nodes = (1 << (k+1)) - 1;
+
     printf("N=%d, K=%d, MAX_NODES=%d, PARENT_TREE_N=%d\n",
-           N, K, MAX_NODES, PARENT_TREE_N);
+           PARENT_TREE2.n, PARENT_TREE2.k, PARENT_TREE2.max_nodes, PARENT_TREE2.n);
 
     outfile = fopen("nocows.out", "w");
     fprintf(outfile, "%d\n", count_pedigrees());
@@ -66,7 +79,7 @@ int count_pedigrees() {
     PARENT_TREE = malloc(sizeof(Node));
     initialize_node(PARENT_TREE);
 
-    if (N <= MAX_NODES) {
+    if (PARENT_TREE2.n <= PARENT_TREE2.max_nodes) {
         build_base_parent_tree();
         pedigrees = walk_parent_tree();
     }
@@ -100,7 +113,7 @@ Node *get_parent_with_empty_right_child(Node *head, int *current_height) {
 }
 
 int head_can_create_child(Node *child, int current_height) {
-    if (current_height < K && child == NULL) {
+    if (current_height < PARENT_TREE2.k && child == NULL) {
         return 1;
     }
     return 0;
@@ -111,7 +124,7 @@ void build_base_parent_tree() {
     int head_can_create_left_child, head_can_create_right_child;
     Node *head = PARENT_TREE;
 
-    for (i=1; i < PARENT_TREE_N; ++i) {
+    for (i=1; i < PARENT_TREE2.parent_n; ++i) {
         if (head_can_create_child(head->left, current_height)) {
             head->left = initialize_child(head, head->left);
             head = head->left;
