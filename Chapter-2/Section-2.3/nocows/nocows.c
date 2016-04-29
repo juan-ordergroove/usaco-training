@@ -140,8 +140,6 @@ void build_base_parent_tree() {
     }
 }
 
-
-
 int walk_parent_tree() {
     int pedigrees = 1;
     Node *head = PARENT_TREE.head;
