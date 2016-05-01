@@ -101,15 +101,15 @@ Node *initialize_child(Node *parent, Node *child) {
     return child;
 }
 
-Node *get_parent_with_empty_right_child(Node *head, int *current_height) {
-    while (head->parent != NULL) {
-        head = head->parent;
-        *current_height = *current_height - 1;
-        if (head->right == NULL) {
+int get_new_height_and_head_from_parent_with_empty_right_child(Node **head, int current_height) {
+    while ((*head)->parent != NULL) {
+        *head = (*head)->parent;
+        current_height = current_height - 1;
+        if ((*head)->right == NULL) {
             break;
         }
     }
-    return head;
+    return current_height;
 }
 
 int head_can_create_child(Node *child, int current_height) {
@@ -134,7 +134,7 @@ void build_base_parent_tree() {
             head = head->right;
             ++current_height;
         } else {
-            head = get_parent_with_empty_right_child(head, &current_height);
+            current_height = get_new_height_and_head_from_parent_with_empty_right_child(&head, current_height);
             --i; // Reset the counter - we need to retry inserting "this" node
         }
     }
