@@ -42,14 +42,15 @@ typedef struct Trees {
 } Tree;
 
 Tree PARENT_TREE;
+int PEDIGREES = 0;
 static const int MODULO_VALUE = 9901;
 
 void initialize_node(Node *node);
 Node *initialize_child(Node *parent, Node *child);
 void build_base_parent_tree();
 void free_tree(Node *head);
-int count_pedigrees();
-int walk_parent_tree();
+void count_pedigrees();
+void count_tree_structure_variations();
 
 int main() {
     int n, k;
@@ -67,25 +68,24 @@ int main() {
     printf("N=%d, K=%d, MAX_NODES=%d, PARENT_TREE_N=%d\n",
            PARENT_TREE.n, PARENT_TREE.k, PARENT_TREE.max_nodes, PARENT_TREE.parent_n);
 
+    count_pedigrees();
     outfile = fopen("nocows.out", "w");
-    fprintf(outfile, "%d\n", count_pedigrees() % MODULO_VALUE);
+    fprintf(outfile, "%d\n", PEDIGREES % MODULO_VALUE);
     fclose(outfile);
 
     return 0;
 }
 
-int count_pedigrees() {
-    int pedigrees = 0;
+void count_pedigrees() {
     PARENT_TREE.head = malloc(sizeof(Node));
     initialize_node(PARENT_TREE.head);
 
     if (PARENT_TREE.n <= PARENT_TREE.max_nodes) {
         build_base_parent_tree();
-        pedigrees = walk_parent_tree();
+        count_tree_structure_variations();
     }
 
     free_tree(PARENT_TREE.head);
-    return pedigrees;
 }
 
 void initialize_node(Node *node) {
@@ -140,15 +140,32 @@ void build_base_parent_tree() {
     }
 }
 
-int walk_parent_tree() {
-    int pedigrees = 1;
-    Node *head = PARENT_TREE.head;
+Node *find_leaf(Node *head) {
+    while (head->left != NULL) {
+        head = head->left;
+    }
+    while (head->right != NULL) {
+        head = head->right;
+    }
+    return head;
+}
+
+void count_tree_structure_variations() {
+    Node *leaf;
+    ++PEDIGREES;
     printf("head->parent=%d head=%d head->left=%d head->right=%d\n",
-           (int)head->parent, (int)head, (int)head->left, (int)head->right);
-    // While there is a node on the left side of the tree:
-    //      What are all the positions to its right it can occupy,
-    //      END STATE: the node reaches the right-most position
-    return pedigrees;
+           (int)PARENT_TREE.head->parent, (int)PARENT_TREE.head, (int)PARENT_TREE.head->left, (int)PARENT_TREE.head->right);
+    /*
+        If there are still nodes on the right that can have a leaf attached, find the next leaf on the left side.
+        Count all intermediary leaf positions that can be taken before reaching available "rightmost leaf" position.
+
+        Exit States:
+            - No available positions for a new leaf on the right side
+            - No available leaves on the left side
+    */
+    //while( ... ) {
+    //    leaf = find_leaf(PARENT_TREE.head->left);
+    //}
 }
 
 void free_tree(Node *head) {
