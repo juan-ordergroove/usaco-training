@@ -5,4 +5,7 @@ TASK: nowcows
 """
 
 def nocows(n, k):
-    return 2
+    if n == 0:
+        return 1
+    if k == 0:
+        return 0
