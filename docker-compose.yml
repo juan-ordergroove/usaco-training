@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  usaco:
+    build:
+      context: .
+    image: usaco-training:latest
+    working_dir: /usaco-training
+    command: python
+    volumes:
+      - .:/usaco-training
