@@ -19,5 +19,9 @@ class NocowsTestCase(unittest.TestCase):
         k = 3
         self.assertEqual(0, Tree(MAX_NODES(k) + 4, k).count())
 
-    def test_sample_use_case(self):
+    def test_sample_use_cases(self):
         self.assertEqual(2, nocows(5, 3))
+        self.assertEqual(6, nocows(9, 4))
+        self.assertEqual(6, nocows(11, 4))
+        self.assertEqual(5024, nocows(35, 7))
+        self.assertEqual(0 , nocows(172, 44))
