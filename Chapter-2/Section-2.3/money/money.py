@@ -6,24 +6,22 @@ TASK: money
 
 
 class MoneySystem:
-    def __init__(self, n, v, coins):
-        self.n = n
-        self.v = v
-        self.counter = 0
-
+    def __init__(self, coins):
+        self.v = len(coins)
+        self.count = 0
         self.coins = coins
         self.coins.sort()
 
-    def count_combinations(self):
-        if not all([c > self.n for c in self.coins]):
-            self._iter()
-        return self.counter
+    def count_constructions(self, n):
+        if any([c <= n for c in self.coins]):
+            self._break(n)
+        return self.count
 
-    def _iter(self, i=0, calc=0):
+    def _break(self, n, i=0, calc=0):
         for j in range(i, self.v):
-            if calc + self.coins[j] == self.n:
-                self.counter += 1
+            if calc + self.coins[j] == n:
+                self.count += 1
                 return
-            if calc + self.coins[j] > self.n:
+            if calc + self.coins[j] > n:
                 return
-            self._iter(j, calc + self.coins[j])
+            self._break(n, j, calc + self.coins[j])
