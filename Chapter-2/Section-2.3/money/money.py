@@ -13,15 +13,11 @@ class MoneySystem:
         self.coins.sort()
 
     def count_constructions(self, n):
-        if any([c <= n for c in self.coins]):
-            self._break(n)
-        return self.count
+        change_counter = [0] * (n + 1)
+        change_counter[0] = 1
 
-    def _break(self, n, i=0, calc=0):
-        for j in range(i, self.v):
-            if calc + self.coins[j] == n:
-                self.count += 1
-                return
-            if calc + self.coins[j] > n:
-                return
-            self._break(n, j, calc + self.coins[j])
+        for c in self.coins:
+            for i in range(c, n + 1):
+                change_counter[i] += change_counter[i - c]
+
+        return change_counter[n]

@@ -40,8 +40,9 @@ class MoneySystemsTestCase(unittest.TestCase):
         money_sys = MoneySystem(coins)
         self.assertEqual(0, money_sys.count_constructions(target_value))
 
-    #def test_upper_bound_variant(self):
-    #    coins = [i for i in range(1, 26)]
-    #    target_value = 10000
-    #    money_sys = MoneySystem(target_value, len(coins), coins)
-    #    money_sys.count_constructions()
+    def test_upper_bound_variant(self):
+        # Test runtime @ upper bounds
+        coins = [i for i in range(1, 26)]
+        target_value = 10000
+        money_sys = MoneySystem(coins)
+        money_sys.count_constructions(target_value)
