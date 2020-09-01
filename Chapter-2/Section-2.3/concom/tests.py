@@ -24,26 +24,26 @@ class ControllingCompaniesTestCase(unittest.TestCase):
             cc.get_control_map()
         )
 
-#    def test_multilayer_control(self):
-#        cc = ControllingCompanies()
-#        cc.add_company_data(1, 2, 30)
-#        cc.add_company_data(2, 3, 52)
-#        cc.add_company_data(3, 4, 51)
-#        cc.add_company_data(4, 5, 70)
-#        cc.add_company_data(5, 6, 70)
-#        cc.add_company_data(6, 7, 70)
-#
-#        self.assertEqual(
-#            {
-#                2: {3, 4, 5, 6, 7},
-#                3: {4, 5, 6, 7},
-#                4: {5, 6, 7},
-#                5: {6, 7},
-#                6: {7}
-#            },
-#            cc.get_control_map()
-#        )
-#
+    def test_multilayer_control(self):
+        cc = ControllingCompanies()
+        cc.add_company_data(1, 2, 30)
+        cc.add_company_data(2, 3, 52)
+        cc.add_company_data(3, 4, 51)
+        cc.add_company_data(4, 5, 70)
+        cc.add_company_data(5, 6, 70)
+        cc.add_company_data(6, 7, 70)
+
+        self.assertEqual(
+            {
+                2: [3, 4, 5, 6, 7],
+                3: [4, 5, 6, 7],
+                4: [5, 6, 7],
+                5: [6, 7],
+                6: [7]
+            },
+            cc.get_control_map()
+        )
+
 #    def test_multilayer_control_over_multilayer_sums(self):
 #        cc = ControllingCompanies()
 #

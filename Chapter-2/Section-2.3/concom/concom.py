@@ -19,32 +19,12 @@ class ControllingCompanies:
             self.control[controller].append(controlee)
 
     def get_control_map(self):
-        return self.control
-#        self.compute_implicit_control()
-#        x = collections.defaultdict(list)
-#        for controller, controlees in self.control.items():
-#            x[controller].extend(self.control.get(controller, []))
-#            for controlee in controlees:
-#                x[controller].extend(self.control.get(controlee, []))
-#
-#            x[controller].sort()
-#            x[controller] = set(x[controller])
-#        return x
-#
-#    def compute_implicit_control(self):
-#        implied_control = collections.defaultdict(set)
-#        for controller, controlees in self.control.items():
-#            for controlee in controlees:
-#                for b, perc in self._company_data[controlee].items():
-#                    controller_b_perc = self._company_data[controller].get(b, 0)
-#                    self._company_data[controller].update({b: perc + controller_b_perc})
-#
-#                    if perc + controller_b_perc > 50:
-#                        implied_control[controller].add(b)
-#
-#        for implied_controller, controlees in implied_control.items():
-#            for c in controlees:
-#                self.control[implied_controller].append(c)
+        control_map = collections.defaultdict(list)
+        for controller, controlees in self.control.items():
+            control_map[controller].extend(controlees)
+            for controlee in controlees:
+                control_map[controller].extend(self.control.get(controlee, []))
+        return control_map
 
 
 #if __name__ == '__main__': # pragma: no cover
