@@ -21,7 +21,8 @@ class ControllingCompanies:
 
     def _add_percentage_to_controlling_companies(self, controller, controlee, percentage):
         for parent_controller in self.controlled_by.get(controller, []):
-            self._company_data[parent_controller].update({controlee: percentage})
+            p = self._company_data[parent_controller].get(controlee, 0)
+            self._company_data[parent_controller].update({controlee: p + percentage})
             self._add_percentage_to_controlling_companies(parent_controller, controlee, percentage)
 
     def get_control_map(self):
